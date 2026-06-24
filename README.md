@@ -136,9 +136,14 @@ tabelas de composição dos clusters.
 * clusters DBSCAN;
 * tabelas de composição dos clusters.
 
-## Observações
+## Dataset
 
-Os resultados devem ser interpretados no contexto do conjunto de dados analisado [Iacobelli, A. et. al.]
+A pasta `dataset/` contém os arquivos `.csv` utilizados nos experimentos que foram geraados a partir da aplicação do parser nos programas PLC em formato OpenPLC XML:
+
+- `dataset_normal.csv`: arquivo contendo os atributos extraídos das lógicas de controle legítimas;
+- `dataset_malicious.csv`: arquivo contendo os atributos extraídos das lógicas de controle contendo LLB.
+
+Esses arquivos foram gerados a partir da aplicação do parser `parcer_xml.py` sobre os arquivos PLCopen XML (`.xml`) do dataset utilizado como referência neste trabalho [Iacobelli, A. et. al.].
 
 ## Referência:
 Iacobelli, A., Rinieri, L., Melis, A., Al Sadi, A., Prandini, M., & Callegati, F. (2024, May). Detection of Ladder Logic Bombs in PLC Control Programs: an Architecture based on Formal Verification. In 2024 IEEE 7th International Conference on Industrial Cyber-Physical Systems (ICPS) (pp. 1-7). IEEE.
