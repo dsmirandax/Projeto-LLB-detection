@@ -2,11 +2,11 @@
 
 Este repositório contém os códigos desenvolvidos para a extração de atributos, pré-processamento, análise supervisionada e análise não supervisionada de programas PLC com foco na detecção estática de *Ladder Logic Bombs* (LLB).
 
-O trabalho utiliza arquivos no formato **PLCopen XML** como entrada e converte a lógica de controle PLC em uma representação tabular de atributos. Esses atributos são posteriormente avaliados por modelos de aprendizado de máquina e por técnicas de análise exploratória.
+O trabalho utiliza arquivos no formato **PLCopen XML** como entrada e converte a lógica de controle PLC em uma representação tabular de atributos. Esses atributos são posteriormente avaliados por modelos de aprendizado de máquina supervisionado e não supervisionado.
 
 ## Objetivo
 
-O objetivo do projeto é investigar se atributos extraídos estaticamente da lógica de controle de PLCs podem contribuir para distinguir programas normais de programas contendo LLB.
+O objetivo do projeto é investigar se atributos extraídos estaticamente da lógica de controle de PLC podem contribuir para distinguir programas normais de programas contendo lógicas maliciosas.
 
 A análise busca identificar quais grupos de atributos apresentam maior potencial discriminativo, considerando:
 
@@ -80,15 +80,14 @@ git clone https://github.com/dsmirandax/Projeto-LLD-detection.git
 cd Projeto-LLD-detection
 ```
 
-3. Execute os scripts de extração de atributos sobre os arquivos PLCopen XML.
+3. Execute o parser para extração de atributos dos arquivos PLCopen XML.
 
-4. Execute os scripts de treinamento e avaliação dos modelos.
-
-5. Gere as tabelas e figuras utilizadas na análise supervisionada e não supervisionada.
+4. Execute o notebook ( ) para treinamento e avaliação dos modelos.
+Esse notebook realiza a preparação dos dados, comparação dos modelos supervisionados, avaliação por grupos de atributos e análise não supervisionada.
 
 ## Resultados gerados
 
-Os scripts podem geram arquivos como:
+O notebook gera arquivos como:
 
 * tabela de atributos extraídos;
 * tabela comparativa de classificadores;
