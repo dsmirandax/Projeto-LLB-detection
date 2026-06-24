@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-
+import pandas as pd
 import argparse
 import csv
 import json
@@ -394,83 +394,36 @@ def write_json(rows: List[Dict[str, Any]], output_path: Path) -> None:
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(rows, f, ensure_ascii=False, indent=2)
 
-def clean_rows_for_modeling(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def clean_and_transpose_csv_like_script(rows: List[Dict[str, Any]], output_path: Path) -> None:
     """
-    Remove colunas auxiliares/textuais e converte colunas numéricas quando aplicável.
+    Aplica exatamente a mesma limpeza do script externo:
+    - remove il_like_sequence e file_path;
+    - usa file_name como índice;
+    - transpõe o dataset;
+    - salva o CSV final.
     """
 
-    drop_cols = [
-        "il_like_sequence",
-        "file_path",
-    ]
+    df = pd.DataFrame(rows)
 
-    cleaned_rows = []
+    # Garante que existe file_name
+    if "file_name" not in df.columns:
+        raise ValueError("A coluna 'file_name' não foi encontrada no CSV.")
 
-    for row in rows:
-        new_row = {
-            k: v for k, v in row.items()
-            if k not in drop_cols
-        }
-        cleaned_rows.append(new_row)
+    # Coloca file_name como índice e transpõe
+    df_t = df.set_index("file_name").T.reset_index()
+    df_t = df_t.rename(columns={"index": "feature"})
 
-    if not cleaned_rows:
-        return cleaned_rows
-
-    protected_cols = {
-        "file_name",
-        "label",
-        "pou_names",
-        "function_block_names",
-        "input_var_names",
-        "output_var_names",
-        "local_var_names",
-        "block_types",
-        "written_output_names",
-        "assigned_vars_st",
-        "seq_opcode_vocab",
-        "task_intervals",
-        "task_priorities",
-    }
-
-    fieldnames = sorted({k for row in cleaned_rows for k in row.keys()})
-
-    for col in fieldnames:
-        if col in protected_cols:
-            continue
-
-        converted_values = []
-        can_convert = True
-
-        for row in cleaned_rows:
-            value = row.get(col, "")
-
-            if value in ("", None):
-                converted_values.append(value)
-                continue
-
-            try:
-                if isinstance(value, (int, float)):
-                    converted_values.append(value)
-                else:
-                    converted_values.append(float(value))
-            except (ValueError, TypeError):
-                can_convert = False
-                break
-
-        if can_convert:
-            for row, converted in zip(cleaned_rows, converted_values):
-                row[col] = converted
-
-    return cleaned_rows
+    # Salva em CSV
+    df_t.to_csv(output_path, index=False, encoding="utf-8-sig")
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Extrai features de arquivos PLCopen XML.")
     parser.add_argument("--input", required=True, help="Pasta contendo os XMLs.")
     parser.add_argument("--output", required=True, help="Arquivo CSV de saída.")
     parser.add_argument("--json-output", default=None, help="Arquivo JSON opcional.")
-    parser.add_argument("--recursive", action="store_true", help="Busca XMLs recursivamente.")
+    parser.add_argument("--recursive", action="store_true", help="Busca XML recursivamente.")
     parser.add_argument("--label", default=None, help="Rótulo fixo, ex.: benign ou suspicious.")
-    parser.add_argument("--pretty", action="store_true", help="Imprime resumo no terminal.")
+    parser.add_argument("--pretty", action="store_true", help="Imprime resumo")
     args = parser.parse_args()
 
     input_dir = Path(args.input)
@@ -491,12 +444,6 @@ def main() -> int:
             rows.append(extract_all_features(xml_file, fixed_label=args.label))
         except Exception as e:
             failures.append((str(xml_file), str(e)))
-    
-    drop_cols = ["il_like_sequence", "file_path"]
-    df = df.drop(columns=[c for c in drop_cols if c in df.columns], errors="ignore")
-
-    # Limpa linhas para modelagem
-    rows = clean_rows_for_modeling(rows)
 
     if not rows:
         print("Nenhum XML foi processado com sucesso.", file=sys.stderr)
@@ -504,7 +451,7 @@ def main() -> int:
 
     output_csv = Path(args.output)
     output_csv.parent.mkdir(parents=True, exist_ok=True)
-    write_csv(rows, output_csv)
+    clean_and_transpose_csv_like_script(rows, output_csv)
 
     if args.json_output:
         output_json = Path(args.json_output)
