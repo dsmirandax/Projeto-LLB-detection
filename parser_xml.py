@@ -394,6 +394,74 @@ def write_json(rows: List[Dict[str, Any]], output_path: Path) -> None:
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(rows, f, ensure_ascii=False, indent=2)
 
+def clean_rows_for_modeling(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Remove colunas auxiliares/textuais e converte colunas numéricas quando aplicável.
+    """
+
+    drop_cols = [
+        "il_like_sequence",
+        "file_path",
+    ]
+
+    cleaned_rows = []
+
+    for row in rows:
+        new_row = {
+            k: v for k, v in row.items()
+            if k not in drop_cols
+        }
+        cleaned_rows.append(new_row)
+
+    if not cleaned_rows:
+        return cleaned_rows
+
+    protected_cols = {
+        "file_name",
+        "label",
+        "pou_names",
+        "function_block_names",
+        "input_var_names",
+        "output_var_names",
+        "local_var_names",
+        "block_types",
+        "written_output_names",
+        "assigned_vars_st",
+        "seq_opcode_vocab",
+        "task_intervals",
+        "task_priorities",
+    }
+
+    fieldnames = sorted({k for row in cleaned_rows for k in row.keys()})
+
+    for col in fieldnames:
+        if col in protected_cols:
+            continue
+
+        converted_values = []
+        can_convert = True
+
+        for row in cleaned_rows:
+            value = row.get(col, "")
+
+            if value in ("", None):
+                converted_values.append(value)
+                continue
+
+            try:
+                if isinstance(value, (int, float)):
+                    converted_values.append(value)
+                else:
+                    converted_values.append(float(value))
+            except (ValueError, TypeError):
+                can_convert = False
+                break
+
+        if can_convert:
+            for row, converted in zip(cleaned_rows, converted_values):
+                row[col] = converted
+
+    return cleaned_rows
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Extrai features de arquivos PLCopen XML.")
@@ -423,6 +491,12 @@ def main() -> int:
             rows.append(extract_all_features(xml_file, fixed_label=args.label))
         except Exception as e:
             failures.append((str(xml_file), str(e)))
+    
+    drop_cols = ["il_like_sequence", "file_path"]
+    df = df.drop(columns=[c for c in drop_cols if c in df.columns], errors="ignore")
+
+    # Limpa linhas para modelagem
+    rows = clean_rows_for_modeling(rows)
 
     if not rows:
         print("Nenhum XML foi processado com sucesso.", file=sys.stderr)
