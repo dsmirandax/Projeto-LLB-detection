@@ -1,3 +1,4 @@
+Features/
 .venv/
 __pycache__/
 .ipynb_checkpoints/
@@ -6,3 +7,18 @@ Outputs/
 *.pkl
 *.png
 logs.log
+Notebooks/anomaly_confusion_matrix.csv
+Notebooks/anomaly_metrics.csv
+Notebooks/anomaly_test_predictions.csv
+Notebooks/best_model_metrics.csv
+Notebooks/classification_leaderboard.csv
+Notebooks/cluster_label_count_estruturais.csv
+Notebooks/cluster_label_percent_estruturais.csv
+Notebooks/clusterizacao_resumo.csv
+Notebooks/dbscan_logicas.pdf
+Notebooks/feature_importance..pdf
+Notebooks/feature_importance_best_model.csv
+Notebooks/iframe_figures/
+Notebooks/metrics_holdout.csv
+Notebooks/pca_dbscan_logicas.pdf
+Notebooks/pca_logicas.pdf
