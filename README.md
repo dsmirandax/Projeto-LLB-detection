@@ -17,7 +17,7 @@ A análise busca identificar quais grupos de atributos apresentam maior potencia
 
 ## Estrutura geral do projeto
 
-O projeto está organizado em etapas principais:
+O projeto está organizado em etapas. As etapas 1 e 2 são executadas por meio do parser_xml.py e as demais, pelo notebook detector_llb.ipynb:
 
 1. **Leitura dos arquivos PLCopen XML**
    Processamento dos arquivos XML contendo a lógica PLC.
@@ -80,10 +80,61 @@ git clone https://github.com/dsmirandax/Projeto-LLD-detection.git
 cd Projeto-LLD-detection
 ```
 
-3. Execute o parser para extração de atributos dos arquivos PLCopen XML.
+### Execução básica
 
-4. Execute o notebook ( ) para treinamento e avaliação dos modelos.
-Esse notebook realiza a preparação dos dados, comparação dos modelos supervisionados, avaliação por grupos de atributos e análise não supervisionada.
+1. Execute o parser para extração de atributos dos arquivos PLCopen XML.
+
+O extrator processa arquivos PLCopen XML (`.xml`) e gera uma base tabular com os atributos extraídos da lógica de controle.
+
+A saída principal é um arquivo `.csv`, já no formato adequado para modelagem, em que cada linha representa um arquivo XML e cada coluna representa um atributo extraído. Opcionalmente, o mesmo conjunto de dados também pode ser exportado em formato `.xlsx` para inspeção em planilhas.
+
+
+```bash
+python parcer_xml.py --input ./xmls --output dataset_features.csv
+
+```
+A entrada do extrator é uma pasta contendo arquivos PLCopen XML (`.xml`).
+Exemplo de estrutura:
+
+```text
+Pasta_contendo_arquivos_xml/
+├── normal_01.xml
+├── normal_02.xml
+├── llb_01.xml
+└── llb_02.xml
+```
+Formato da saída:
+* cada linha representa um arquivo PLCopen XML processado;
+* cada coluna representa um atributo extraído;
+* file_name identifica o arquivo de origem;
+
+2. Execute o notebook ( ) para treinamento e avaliação dos modelos.
+
+detector_llb.ipynb
+
+Esse notebook realiza:
+
+leitura do dataset gerado pelo parser;
+pré-processamento dos dados;
+conversão de tipos;
+remoção de atributos inadequados à modelagem;
+comparação dos modelos supervisionados;
+avaliação por grupos de atributos;
+análise de importância dos atributos;
+análise não supervisionada com PCA e DBSCAN;
+geração das tabelas e gráficos dos experimentos.
+Resultados gerados
+
+A execução do notebook pode gerar arquivos como:
+
+dataset pré-processado;
+tabela comparativa de classificadores;
+métricas de avaliação dos modelos;
+tabelas de desempenho por grupo de atributos;
+gráficos de importância de atributos;
+projeções PCA;
+gráficos de agrupamento DBSCAN;
+tabelas de composição dos clusters.
 
 ## Resultados gerados
 
