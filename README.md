@@ -2,18 +2,7 @@
 
 Este repositório contém os códigos desenvolvidos para a extração de atributos, pré-processamento, análise supervisionada e análise não supervisionada de programas PLC com foco na detecção estática de *Ladder Logic Bombs* (LLB).
 
-O trabalho utiliza arquivos no formato **PLCopen XML** como entrada e converte a lógica de controle PLC em uma representação tabular de atributos. Esses atributos são posteriormente avaliados por modelos de aprendizado de máquina supervisionado e não supervisionado.
-
-## Objetivo
-
-O objetivo do projeto é investigar se atributos extraídos estaticamente da lógica de controle de PLC podem contribuir para distinguir programas normais de programas contendo lógicas maliciosas.
-
-A análise busca identificar quais grupos de atributos apresentam maior potencial discriminativo, considerando:
-
-* atributos estruturais e topológicos;
-* atributos lógicos;
-* atributos semânticos leves;
-* atributos sequenciais.
+O trabalho utiliza arquivos no formato **PLCopen XML** como entrada e converte a lógica de controle PLC em uma representação tabular de atributos (vide arquivos /Dataframes/dataset_normal.csv e dataset_malicious.csv). Esses atributos são posteriormente avaliados por modelos de aprendizado de máquina supervisionado e não supervisionado.
 
 ## Estrutura geral do projeto
 
@@ -82,12 +71,7 @@ cd Projeto-LLD-detection
 
 ### Execução básica
 
-1. Execute o parser para extração de atributos dos arquivos PLCopen XML.
-
-O extrator processa arquivos PLCopen XML (`.xml`) e gera uma base tabular com os atributos extraídos da lógica de controle.
-
-A saída principal é um arquivo `.csv`, já no formato adequado para modelagem, em que cada linha representa um arquivo XML e cada coluna representa um atributo extraído. Opcionalmente, o mesmo conjunto de dados também pode ser exportado em formato `.xlsx` para inspeção em planilhas.
-
+1. Execute o parser:
 
 ```bash
 python parcer_xml.py --input ./xmls --output dataset_features.csv
@@ -103,6 +87,11 @@ Pasta_contendo_arquivos_xml/
 ├── llb_01.xml
 └── llb_02.xml
 ```
+
+O extrator processa arquivos PLCopen XML (`.xml`) e gera uma base tabular com os atributos extraídos da lógica de controle.
+
+A saída principal é um arquivo `.csv`, já no formato adequado para modelagem, em que cada linha representa um arquivo XML e cada coluna representa um atributo extraído. Opcionalmente, o mesmo conjunto de dados também pode ser exportado em formato `.xlsx` para inspeção em planilhas.
+
 Formato da saída:
 * cada linha representa um arquivo PLCopen XML processado;
 * cada coluna representa um atributo extraído;
@@ -137,8 +126,6 @@ gráficos de agrupamento DBSCAN;
 tabelas de composição dos clusters.
 
 ## Resultados gerados
-
-O notebook gera arquivos como:
 
 * tabela de atributos extraídos;
 * tabela comparativa de classificadores;
