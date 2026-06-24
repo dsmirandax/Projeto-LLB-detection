@@ -74,7 +74,7 @@ cd Projeto-LLD-detection
 1. Execute o parser:
 
 ```bash
-python parcer_xml.py --input ./xmls --output dataset_features.csv
+   python parcer_xml.py --input ./xmls --output dataset_features.csv
 
 ```
 A entrada do extrator é uma pasta contendo arquivos PLCopen XML (`.xml`).
@@ -87,6 +87,7 @@ Pasta_contendo_arquivos_xml/
 ├── llb_01.xml
 └── llb_02.xml
 ```
+Caso os arquivos .xml estejam organizados em subpastas, deve-se utilizar a opção --recursive
 
 O extrator processa arquivos PLCopen XML (`.xml`) e gera uma base tabular com os atributos extraídos da lógica de controle.
 
